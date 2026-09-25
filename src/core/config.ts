@@ -61,8 +61,13 @@ export type GenelConfig = z.infer<typeof genelSchema>;
 
 /**
  * `.env` değişkenlerini doğrular. `tokenKey` verilirse o değişkeni `token` olarak okur
- * ve eksik/boşsa `ConfigError` fırlatır; verilmezse `token` alanı `undefined` kalır.
+ * ve eksik/boşsa `ConfigError` fırlatır; verilmezse dönen değerde `token` alanı bulunmaz.
  */
+export function loadEnv(source?: NodeJS.ProcessEnv): Env;
+export function loadEnv(
+  source: NodeJS.ProcessEnv | undefined,
+  tokenKey: string,
+): Env & { token: string };
 export function loadEnv(
   source: NodeJS.ProcessEnv = process.env,
   tokenKey?: string,
@@ -96,8 +101,12 @@ export function loadJsonConfig<S extends z.ZodType>(file: string, schema: S): z.
   let raw: string;
   try {
     raw = readFileSync(filePath, 'utf8');
-  } catch {
-    throw new ConfigError(`${displayName} bulunamadı`);
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+      throw new ConfigError(`${displayName} bulunamadı`);
+    }
+    const reason = error instanceof Error ? error.message : String(error);
+    throw new ConfigError(`${displayName} okunamadı: ${reason}`);
   }
 
   let json: unknown;

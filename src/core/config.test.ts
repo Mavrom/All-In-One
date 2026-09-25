@@ -39,7 +39,14 @@ describe('loadEnv', () => {
 
   it('tokenKey verilmeden çağrıldığında token okumaya çalışmaz', () => {
     const env = loadEnv(validSource);
-    expect(env.token).toBeUndefined();
+    expect(env).not.toHaveProperty('token');
+  });
+
+  it('tokenKey verildiğinde dönen tipte token zorunlu alan olarak yer alır', () => {
+    const env = loadEnv(validSource, 'MODERASYON_TOKEN');
+    // Derleme zamanı kontrolü: token burada `string`, `string | undefined` değil.
+    const token: string = env.token;
+    expect(token).toBe('gercek-token');
   });
 
   it('tokenKey verilmiş ama değişken eksikse ConfigError fırlatır', () => {
@@ -120,6 +127,17 @@ describe('loadJsonConfig', () => {
       expect(error).toBeInstanceOf(ConfigError);
       expect((error as Error).message).toContain(file);
       expect((error as Error).message).toContain('bulunamadı');
+    }
+  });
+
+  it('dosya yerine dizin verilirse ConfigError fırlatır ve "okunamadı" belirtir', () => {
+    try {
+      loadJsonConfig(dir, genelSchema);
+      expect.unreachable();
+    } catch (error) {
+      expect(error).toBeInstanceOf(ConfigError);
+      expect((error as Error).message).toContain(dir);
+      expect((error as Error).message).toContain('okunamadı');
     }
   });
 
