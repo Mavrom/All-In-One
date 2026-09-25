@@ -118,6 +118,32 @@ export class PunishmentService {
     }).lean();
   }
 
+  /** `caseId` numaralı kaydı döner (yoksa `null`). */
+  async findCase(caseId: number): Promise<PunishmentRecord | null> {
+    return Punishment.findOne({ guildId: this.guildId, caseId }).lean();
+  }
+
+  /** Aktif kayıtları (verilirse yalnızca `type` türündekileri) en yeniden eskiye döner. */
+  async listActive(type?: PunishmentType): Promise<PunishmentRecord[]> {
+    return Punishment.find({
+      guildId: this.guildId,
+      status: 'active',
+      ...(type !== undefined ? { type } : {}),
+    })
+      .sort({ caseId: -1 })
+      .lean();
+  }
+
+  /** Bir kullanıcının tüm kayıtlarını (iptal edilenler dahil) en yeniden eskiye döner. */
+  async listByUser(userId: string): Promise<PunishmentRecord[]> {
+    return Punishment.find({ guildId: this.guildId, userId }).sort({ caseId: -1 }).lean();
+  }
+
+  /** Bir yetkilinin verdiği tüm kayıtları en yeniden eskiye döner. */
+  async listByStaff(staffId: string): Promise<PunishmentRecord[]> {
+    return Punishment.find({ guildId: this.guildId, staffId }).sort({ caseId: -1 }).lean();
+  }
+
   /**
    * `staffId`'nin `type` için limitini denetler; aşıldıysa `limit` olayı yayınlayıp
    * `UserError` fırlatır. Limitsiz türler ve Sahip kademesi için sessizce geçer.
@@ -322,6 +348,7 @@ export class PunishmentService {
       userId,
       status: { $ne: 'revoked' },
     });
+    if (records.length === 0) return 0;
     const now = new Date();
 
     for (const record of records) {

@@ -34,7 +34,7 @@ export default defineCommand({
         ctx.user.id,
         args.sebep,
       );
-      await ctx.reply({ embeds: [revokeDone(record, user)] });
+      await ctx.reply({ embeds: [revokeDone(record, user.tag)] });
       return;
     }
 

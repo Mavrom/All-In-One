@@ -1,9 +1,7 @@
 import { arg } from '#core/args.js';
 import { defineCommand } from '#core/define.js';
-import { mod } from '#services/ModServices.js';
 import { Level } from '#services/PermissionService.js';
-import { ensureCanPunish } from '#services/TargetService.js';
-import { punishmentDone } from '#utils/replies.js';
+import { punishAndReply } from '#services/PunishCommands.js';
 
 /** `/ban` ve `.ban` (alias `.yasakla`): bir kullanıcıyı sunucudan yasaklar. */
 export default defineCommand({
@@ -17,15 +15,9 @@ export default defineCommand({
     sebep: arg.text({ description: 'Ban sebebi', optional: true }),
   },
   async run(ctx, args) {
-    const { user } = await ensureCanPunish(ctx, args.kullanici);
-    const record = await mod().punishments.punish({
-      type: 'ban',
-      userId: args.kullanici,
-      staffId: ctx.user.id,
-      staffLevel: ctx.level,
-      reason: args.sebep,
+    await punishAndReply(ctx, 'ban', args.kullanici, {
       durationMs: args.sure ?? null,
+      reason: args.sebep,
     });
-    await ctx.reply({ embeds: [punishmentDone(record, user)] });
   },
 });

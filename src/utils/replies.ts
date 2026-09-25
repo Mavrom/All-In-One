@@ -24,9 +24,9 @@ export function punishmentDone(record: PunishmentRecord, user: User): EmbedBuild
 }
 
 /** Bir ceza kaldırıldığında kullanıcıya gösterilecek embed. */
-export function revokeDone(record: PunishmentRecord, user: User): EmbedBuilder {
+export function revokeDone(record: PunishmentRecord, userTag: string): EmbedBuilder {
   const label = PUNISHMENT_LABELS[record.type];
   return success(
-    `**${user.tag}** kullanıcısının **${label}** cezası kaldırıldı. (#${record.caseId})`,
+    `**${userTag}** kullanıcısının **${label}** cezası kaldırıldı. (#${record.caseId})`,
   );
 }
