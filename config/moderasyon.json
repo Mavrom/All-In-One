@@ -1,0 +1,10 @@
+{
+  "prefix": ".",
+  "limitler": {
+    "pencere": "1sa",
+    "ban": 10,
+    "kick": 10,
+    "jail": 20
+  },
+  "kademeler": {}
+}
