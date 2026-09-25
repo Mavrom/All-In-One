@@ -350,10 +350,11 @@ describe('PunishmentService.revokeAll', () => {
     expect(active).toBeNull();
   });
 
-  it('kayıt yoksa 0 döner', async () => {
-    const { service } = createService();
+  it('kayıt yoksa 0 döner ve log olayı yayınlamaz', async () => {
+    const { service, events } = createService();
     const count = await service.revokeAll('user-yok', 'staff1');
     expect(count).toBe(0);
+    expect(events).toEqual([]);
   });
 });
 
@@ -460,5 +461,20 @@ describe('PunishmentService.findCase / listActive', () => {
 
     const active = await service.listActive('jail');
     expect(active.map((r) => r.caseId)).toEqual([second.caseId, first.caseId]);
+  });
+});
+
+describe('PunishmentService.listByUser / listByStaff / listActive', () => {
+  it('kullanıcıya ve yetkiliye göre tüm kayıtları, türsüz aktif listeyi döner', async () => {
+    const { service } = createService();
+    const base = { reason: 'sebep', staffLevel: Level.Mid };
+    const a = await service.punish({ ...base, type: 'warn', userId: 'u1', staffId: 's1' });
+    const b = await service.punish({ ...base, type: 'jail', userId: 'u1', staffId: 's2' });
+    const c = await service.punish({ ...base, type: 'chatmute', userId: 'u2', staffId: 's1' });
+    await service.revoke({ caseId: a.caseId }, 's1');
+
+    expect((await service.listByUser('u1')).map((r) => r.caseId)).toEqual([b.caseId, a.caseId]);
+    expect((await service.listByStaff('s1')).map((r) => r.caseId)).toEqual([c.caseId, a.caseId]);
+    expect((await service.listActive()).map((r) => r.caseId)).toEqual([c.caseId, b.caseId]);
   });
 });

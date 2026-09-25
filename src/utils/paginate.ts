@@ -7,6 +7,7 @@ import {
   EmbedBuilder,
 } from 'discord.js';
 import type { CommandContext } from '#core/types.js';
+import { embed } from './embed.js';
 
 const COLLECT_MS = 120_000;
 
@@ -86,4 +87,26 @@ export async function paginate(ctx: CommandContext, pages: EmbedBuilder[]): Prom
       // Mesaj silinmiş veya artık düzenlenemez olabilir; yutulur.
     });
   });
+}
+
+/**
+ * Satırları `pageSize`'lık embed sayfalarına böler. `header` verilirse her sayfanın
+ * açıklamasının başına eklenir (özet/toplam satırı gibi).
+ */
+export function linePages(
+  title: string,
+  lines: string[],
+  opts: { pageSize?: number; header?: string } = {},
+): EmbedBuilder[] {
+  const pageSize = opts.pageSize ?? 10;
+  const pages: EmbedBuilder[] = [];
+  for (let i = 0; i < lines.length; i += pageSize) {
+    const body = lines.slice(i, i + pageSize).join('\n');
+    pages.push(
+      embed('info')
+        .setTitle(title)
+        .setDescription(opts.header !== undefined ? `${opts.header}\n\n${body}` : body),
+    );
+  }
+  return pages;
 }
