@@ -21,7 +21,7 @@ Botlar öncelik sırasına göre tek tek geliştirilecektir. **İlk öncelik mod
 
 | Sıra | Altyapı | Durum |
 |:---:|---|---|
-| 1 | Moderasyon | 🚧 Aşama 1, 2, 4 tamamlandı; 3 sırada |
+| 1 | Moderasyon | ✅ Tamamlandı (otomatik moderasyon ertelendi) |
 | 2 | Guard | 📝 Planlandı |
 | 3 | İstatistik | 📝 Planlandı |
 | 4 | Özel Oda | 📝 Planlandı |

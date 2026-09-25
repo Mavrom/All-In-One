@@ -8,13 +8,13 @@ Bu doküman All-In-One projesinin ortak çekirdeğini ve moderasyon botunun ilk 
 
 ## 1. Kapsam
 
-Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2 ve 4**'ü ve üye logunu kapsar (bkz. 12. ve 13. bölümler). Aşama 3 henüz yapılmadı.
+Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2 ve 4**'ü ve üye logunu kapsar (bkz. 12. ve 13. bölümler). Aşama 3 (otomatik moderasyon) şimdilik ertelendi.
 
 | Aşama | İçerik |
 |---|---|
 | **1. Çekirdek + Ceza sistemi** | Ortak altyapı, yetki/limit sistemi, ceza ve sicil komutları, kurulum, logkur, ayar, yardım |
 | **2. Kanal + Ses yönetimi** | clear, sil, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim |
-| 3. Otomatik moderasyon | küfür-engel, reklam-engel, yasaklı-kelime, görsel-engel, hesap-koruma |
+| 3. Otomatik moderasyon *(ertelendi)* | küfür-engel, reklam-engel, yasaklı-kelime, görsel-engel, hesap-koruma |
 | **4. Otorol** | otorol, otorolkapat |
 
 **Henüz yapılmayanlar:** Aşama 3, uyarı sayısına göre otomatik ceza, çoklu sunucu desteği, çoklu dil.
