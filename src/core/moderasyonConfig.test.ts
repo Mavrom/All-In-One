@@ -59,6 +59,8 @@ describe('botDefaults', () => {
       'limit.ban': 10,
       'limit.kick': 10,
       'limit.jail': 20,
+      'otorol.uye': null,
+      'otorol.bot': null,
       'kademe.ban': 3,
       'kademe.kick': 2,
     });
@@ -76,6 +78,8 @@ describe('botDefaults', () => {
       'limit.ban': 0,
       'limit.kick': 0,
       'limit.jail': 0,
+      'otorol.uye': null,
+      'otorol.bot': null,
     });
   });
 });

@@ -8,16 +8,16 @@ Bu doküman All-In-One projesinin ortak çekirdeğini ve moderasyon botunun ilk 
 
 ## 1. Kapsam
 
-Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1** ve **Aşama 2**'yi kapsar (Aşama 2 için bkz. [12. bölüm](#12-aşama-2--kanal-ve-ses-yönetimi)).
+Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2 ve 4**'ü ve üye logunu kapsar (bkz. 12. ve 13. bölümler). Aşama 3 henüz yapılmadı.
 
 | Aşama | İçerik |
 |---|---|
 | **1. Çekirdek + Ceza sistemi** | Ortak altyapı, yetki/limit sistemi, ceza ve sicil komutları, kurulum, logkur, ayar, yardım |
 | **2. Kanal + Ses yönetimi** | clear, sil, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim |
 | 3. Otomatik moderasyon | küfür-engel, reklam-engel, yasaklı-kelime, görsel-engel, hesap-koruma |
-| 4. Otorol | otorol, otorolkapat |
+| **4. Otorol** | otorol, otorolkapat |
 
-**Aşama 1 dışında kalanlar:** yukarıdaki diğer aşamalar, üye logu (giriş-çıkış, rol, isim), uyarı sayısına göre otomatik ceza, çoklu sunucu desteği, çoklu dil.
+**Henüz yapılmayanlar:** Aşama 3, uyarı sayısına göre otomatik ceza, çoklu sunucu desteği, çoklu dil.
 
 ---
 
@@ -372,3 +372,29 @@ Komutlar üç yeni kategoride durur: `kanal/`, `ses/`, `uye/`. Kademeler `ayar k
 - move, disconnect ve isim, ceza komutlarıyla aynı hedef kontrolünü kullanır: kendin, bot, sunucu sahibi ve eşit/üst kademedeki yetkililer üzerinde işlem yapılamaz.
 - Toplu taşıma/çıkarmada taşınamayan üyeler atlanır, sonuçta `taşınan/toplam` gösterilir.
 - Tüm işlemler `komut-log`'a otomatik yazılır.
+
+---
+
+## 13. Aşama 4 — Otorol ve Üye Logu
+
+### Otorol
+
+| Komut | Kullanım | Kademe |
+|---|---|---|
+| otorol | `otorol <rol> [bot rolü]` | 3 |
+| otorolkapat | `otorolkapat` | 3 |
+
+- Ayarlar `otorol.uye` ve `otorol.bot` anahtarlarında tutulur (`ayar` ile görünür).
+- Rol botun rolünden aşağıda olmalı ve bir entegrasyona ait olmamalıdır; komut bunu kontrol eder.
+- Aktif jail cezasıyla sunucuya dönen üyeye otorol verilmez (çık-gir koruması önce çalışır).
+- Bot rolü verilmemişse botlara rol verilmez.
+
+### Üye logu
+`logkur` artık `üye-log` kanalını da açar (daha önce çalıştırıldıysa tekrar çalıştırmak yalnızca bu kanalı ekler).
+
+| Olay | İçerik |
+|---|---|
+| Katılma | Üye, hesap oluşturma tarihi (7 günden yeni hesaplar ⚠️ ile işaretlenir), üye sayısı |
+| Ayrılma | Üye, ne zaman katıldığı, sahip olduğu roller |
+| Üye güncelleme | Takma ad değişikliği, verilen/alınan roller |
+| Kullanıcı güncelleme | Kullanıcı adı ve görünen ad değişikliği |

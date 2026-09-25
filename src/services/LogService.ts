@@ -8,6 +8,7 @@ export const LOG_CHANNELS = {
   komutLog: 'komut-log',
   mesajLog: 'mesaj-log',
   sesLog: 'ses-log',
+  uyeLog: 'üye-log',
 } as const;
 
 export type LogChannelKey = keyof typeof LOG_CHANNELS;

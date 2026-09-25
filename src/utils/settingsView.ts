@@ -12,7 +12,8 @@ export function isResettableKey(key: string): boolean {
 /** Bir ayar değerini Discord'da okunur hale getirir: rol/kanal ID'lerini etiketler. */
 export function formatSettingValue(key: string, value: unknown): string {
   if (value === null || value === undefined || value === '') return '—';
-  if (key.startsWith('yetki.') || key.startsWith('rol.')) return `<@&${String(value)}>`;
+  if (key.startsWith('yetki.') || key.startsWith('rol.') || key.startsWith('otorol.'))
+    return `<@&${String(value)}>`;
   if (key.startsWith('kanal.') || key.startsWith('kategori.')) return `<#${String(value)}>`;
   return `\`${String(value)}\``;
 }

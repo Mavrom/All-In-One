@@ -23,6 +23,7 @@ export const GENEL_DEFAULT_KEYS = [
   'kanal.komutLog',
   'kanal.mesajLog',
   'kanal.sesLog',
+  'kanal.uyeLog',
   'kategori.log',
 ] as const;
 

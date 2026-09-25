@@ -124,3 +124,97 @@ export function auditAction(
       return null;
   }
 }
+
+/** Bu süreden yeni hesaplar üye logunda uyarıyla işaretlenir (7 gün). */
+export const NEW_ACCOUNT_MS = 7 * 24 * 60 * 60 * 1000;
+
+function unixSeconds(date: Date): number {
+  return Math.floor(date.getTime() / 1000);
+}
+
+/** `üye-log` için sunucuya katılma embed'i; yeni hesaplar işaretlenir. */
+export function memberJoinEmbed(
+  input: { userId: string; tag: string; createdAt: Date; memberCount: number },
+  now: Date = new Date(),
+): EmbedBuilder {
+  const isNew = now.getTime() - input.createdAt.getTime() < NEW_ACCOUNT_MS;
+  const created = unixSeconds(input.createdAt);
+  return embed(isNew ? 'warning' : 'success')
+    .setTitle('Üye katıldı')
+    .addFields(
+      { name: 'Üye', value: `<@${input.userId}> (${input.tag})` },
+      {
+        name: 'Hesap oluşturma',
+        value: `<t:${created}:f> (<t:${created}:R>)${isNew ? '\n⚠️ Yeni hesap' : ''}`,
+      },
+      { name: 'Üye sayısı', value: String(input.memberCount), inline: true },
+    );
+}
+
+/** `üye-log` için sunucudan ayrılma embed'i: katılma zamanı ve sahip olduğu roller. */
+export function memberLeaveEmbed(input: {
+  userId: string;
+  tag: string;
+  joinedAt: Date | null;
+  roleIds: string[];
+}): EmbedBuilder {
+  const joined = input.joinedAt ? `<t:${unixSeconds(input.joinedAt)}:R>` : 'Bilinmiyor';
+  const roles = input.roleIds.length > 0 ? input.roleIds.map((id) => `<@&${id}>`).join(' ') : '—';
+  return embed('error')
+    .setTitle('Üye ayrıldı')
+    .addFields(
+      { name: 'Üye', value: `<@${input.userId}> (${input.tag})` },
+      { name: 'Katılmıştı', value: joined, inline: true },
+      { name: 'Roller', value: truncate(roles, 1024) },
+    );
+}
+
+/** Bir üyenin loglamayla ilgili sunucu içi durumu. */
+export interface MemberSnapshot {
+  nickname: string | null;
+  roleIds: string[];
+}
+
+/** İki üye durumu arasındaki takma ad ve rol değişikliklerini `üye-log` satırlarına çevirir. */
+export function memberChangeLines(
+  userId: string,
+  before: MemberSnapshot,
+  after: MemberSnapshot,
+): string[] {
+  const user = `<@${userId}>`;
+  const lines: string[] = [];
+
+  if (before.nickname !== after.nickname) {
+    lines.push(`✏️ ${user} takma adı: ${before.nickname ?? '—'} → ${after.nickname ?? '—'}`);
+  }
+
+  const beforeRoles = new Set(before.roleIds);
+  const afterRoles = new Set(after.roleIds);
+  const added = after.roleIds.filter((id) => !beforeRoles.has(id));
+  const removed = before.roleIds.filter((id) => !afterRoles.has(id));
+  if (added.length > 0) {
+    lines.push(`➕ ${user} rol verildi: ${added.map((id) => `<@&${id}>`).join(' ')}`);
+  }
+  if (removed.length > 0) {
+    lines.push(`➖ ${user} rol alındı: ${removed.map((id) => `<@&${id}>`).join(' ')}`);
+  }
+
+  return lines;
+}
+
+/** Kullanıcı adı ve görünen ad değişikliklerini `üye-log` satırlarına çevirir. */
+export function userChangeLines(
+  userId: string,
+  before: { username: string; globalName: string | null },
+  after: { username: string; globalName: string | null },
+): string[] {
+  const user = `<@${userId}>`;
+  const lines: string[] = [];
+  if (before.username !== after.username) {
+    lines.push(`🏷️ ${user} kullanıcı adı: ${before.username} → ${after.username}`);
+  }
+  if (before.globalName !== after.globalName) {
+    lines.push(`🏷️ ${user} görünen ad: ${before.globalName ?? '—'} → ${after.globalName ?? '—'}`);
+  }
+  return lines;
+}

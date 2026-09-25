@@ -2,8 +2,13 @@ import { AuditLogEvent } from 'discord.js';
 import { describe, expect, it } from 'vitest';
 import {
   auditAction,
+  memberChangeLines,
+  memberJoinEmbed,
+  memberLeaveEmbed,
   messageDeleteEmbed,
   messageUpdateEmbed,
+  NEW_ACCOUNT_MS,
+  userChangeLines,
   type VoiceSnapshot,
   voiceChangeLines,
 } from './eventLogs.js';
@@ -131,5 +136,79 @@ describe('auditAction', () => {
       auditAction({ action: AuditLogEvent.MemberUpdate, changes: [{ key: 'nick', new: 'x' }] }),
     ).toBeNull();
     expect(auditAction({ action: AuditLogEvent.ChannelCreate, changes: [] })).toBeNull();
+  });
+});
+
+describe('memberJoinEmbed', () => {
+  const now = new Date('2026-09-25T00:00:00Z');
+
+  it('yeni hesabı uyarıyla işaretler', () => {
+    const json = memberJoinEmbed(
+      { userId: '1', tag: 'berk', createdAt: new Date(now.getTime() - 1000), memberCount: 42 },
+      now,
+    ).toJSON();
+    expect(json.title).toBe('Üye katıldı');
+    expect(json.fields?.[1]?.value).toContain('Yeni hesap');
+    expect(json.fields?.[2]?.value).toBe('42');
+  });
+
+  it('eski hesapta uyarı yoktur', () => {
+    const json = memberJoinEmbed(
+      {
+        userId: '1',
+        tag: 'berk',
+        createdAt: new Date(now.getTime() - NEW_ACCOUNT_MS),
+        memberCount: 1,
+      },
+      now,
+    ).toJSON();
+    expect(json.fields?.[1]?.value).not.toContain('Yeni hesap');
+  });
+});
+
+describe('memberLeaveEmbed', () => {
+  it('rolleri etiketler, rol yoksa tire yazar', () => {
+    const withRoles = memberLeaveEmbed({
+      userId: '1',
+      tag: 'b',
+      joinedAt: null,
+      roleIds: ['R1', 'R2'],
+    }).toJSON();
+    expect(withRoles.fields?.map((f) => f.value)).toEqual([
+      '<@1> (b)',
+      'Bilinmiyor',
+      '<@&R1> <@&R2>',
+    ]);
+    const none = memberLeaveEmbed({ userId: '1', tag: 'b', joinedAt: null, roleIds: [] }).toJSON();
+    expect(none.fields?.[2]?.value).toBe('—');
+  });
+});
+
+describe('memberChangeLines', () => {
+  it('takma ad ve rol değişikliklerini yazar', () => {
+    expect(
+      memberChangeLines(
+        '1',
+        { nickname: null, roleIds: ['A', 'B'] },
+        { nickname: 'yeni', roleIds: ['B', 'C'] },
+      ),
+    ).toEqual([
+      '✏️ <@1> takma adı: — → yeni',
+      '➕ <@1> rol verildi: <@&C>',
+      '➖ <@1> rol alındı: <@&A>',
+    ]);
+  });
+
+  it('değişiklik yoksa boş döner', () => {
+    const same = { nickname: 'x', roleIds: ['A'] };
+    expect(memberChangeLines('1', same, same)).toEqual([]);
+  });
+});
+
+describe('userChangeLines', () => {
+  it('kullanıcı adı ve görünen ad değişikliklerini yazar', () => {
+    expect(
+      userChangeLines('1', { username: 'a', globalName: null }, { username: 'b', globalName: 'B' }),
+    ).toEqual(['🏷️ <@1> kullanıcı adı: a → b', '🏷️ <@1> görünen ad: — → B']);
   });
 });

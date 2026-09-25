@@ -21,7 +21,8 @@ export type ModerasyonConfig = z.infer<typeof moderasyonSchema>;
 
 /**
  * `moderasyon` botunun `Settings` kapsamı için kod varsayılanlarını üretir: prefix, limit
- * ayarları (`limit.pencere`, `limit.ban`, `limit.kick`, `limit.jail`) ve `kademeler`
+ * ayarları (`limit.pencere`, `limit.ban`, `limit.kick`, `limit.jail`), otorol rolleri
+ * (`otorol.uye`, `otorol.bot`; `.otorol` ile ayarlanır) ve `kademeler`
  * haritasındaki her komut için Türkçe küçük harfli bir `kademe.<komut>` anahtarı.
  */
 export function botDefaults(cfg: ModerasyonConfig): Record<string, unknown> {
@@ -31,6 +32,8 @@ export function botDefaults(cfg: ModerasyonConfig): Record<string, unknown> {
     'limit.ban': cfg.limitler.ban,
     'limit.kick': cfg.limitler.kick,
     'limit.jail': cfg.limitler.jail,
+    'otorol.uye': null,
+    'otorol.bot': null,
   };
 
   for (const [command, level] of Object.entries(cfg.kademeler)) {
