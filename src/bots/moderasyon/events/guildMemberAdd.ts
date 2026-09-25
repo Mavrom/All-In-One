@@ -30,7 +30,8 @@ export default defineEvent({
     }
 
     try {
-      await giveAutoRole(member, bot.settings.bot);
+      const roleId = await giveAutoRole(member, bot.settings.bot);
+      if (roleId) bot.logger.info({ userId: member.id, roleId }, 'Otorol verildi');
     } catch (error) {
       bot.logger.warn({ err: error, userId: member.id }, 'Otorol verilemedi');
     }

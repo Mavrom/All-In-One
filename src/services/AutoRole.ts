@@ -21,12 +21,14 @@ export function assertAssignableRole(ctx: CommandContext, roleId: string): Role 
 /**
  * Yeni katılan üyeye ayardaki otorolü verir (botlara `otorol.bot`, diğerlerine `otorol.uye`).
  * Rol ayarlanmamışsa veya sunucuda yoksa hiçbir şey yapmaz; Discord hatası çağırana bırakılır.
+ * Verilen rolün ID'sini, rol verilmediyse `null` döner.
  */
 export async function giveAutoRole(
   member: GuildMember,
   settings: { get<T>(key: string): T | undefined },
-): Promise<void> {
+): Promise<string | null> {
   const roleId = settings.get<string | null>(member.user.bot ? 'otorol.bot' : 'otorol.uye');
-  if (!roleId || !member.guild.roles.cache.has(roleId)) return;
+  if (!roleId || !member.guild.roles.cache.has(roleId)) return null;
   await member.roles.add(roleId, 'Otorol');
+  return roleId;
 }
