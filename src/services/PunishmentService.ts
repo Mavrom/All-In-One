@@ -118,6 +118,18 @@ export class PunishmentService {
     }).lean();
   }
 
+  /** `caseId` numaralı kaydı döner (yoksa `null`). */
+  async findCase(caseId: number): Promise<PunishmentRecord | null> {
+    return Punishment.findOne({ guildId: this.guildId, caseId }).lean();
+  }
+
+  /** Bir türdeki tüm aktif kayıtları en yeniden eskiye doğru döner. */
+  async listActive(type: PunishmentType): Promise<PunishmentRecord[]> {
+    return Punishment.find({ guildId: this.guildId, type, status: 'active' })
+      .sort({ caseId: -1 })
+      .lean();
+  }
+
   /**
    * `staffId`'nin `type` için limitini denetler; aşıldıysa `limit` olayı yayınlayıp
    * `UserError` fırlatır. Limitsiz türler ve Sahip kademesi için sessizce geçer.
