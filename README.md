@@ -21,7 +21,7 @@ Botlar öncelik sırasına göre tek tek geliştirilecektir. **İlk öncelik mod
 
 | Sıra | Altyapı | Durum |
 |:---:|---|---|
-| 1 | Moderasyon | 🚧 Geliştiriliyor |
+| 1 | Moderasyon | ✅ Aşama 1 tamamlandı |
 | 2 | Guard | 📝 Planlandı |
 | 3 | İstatistik | 📝 Planlandı |
 | 4 | Özel Oda | 📝 Planlandı |
@@ -32,12 +32,13 @@ Botlar öncelik sırasına göre tek tek geliştirilecektir. **İlk öncelik mod
 > Sıralama ve içerik zamanla değişebilir. Durumlar geliştirme ilerledikçe güncellenecektir.
 
 ### 🛡️ Moderasyon
-Sunucu yetkililerinin kullanacağı temel yönetim araçları.
-- Ban / unban, kick, timeout (mute) / unmute
-- Uyarı sistemi (uyarı verme, listeleme, silme)
-- Mesaj temizleme
-- Ceza geçmişi ve sicil
-- Moderasyon işlemleri için log kanalı
+Sunucu yetkililerinin kullanacağı temel yönetim araçları. Aşama 1 tamamlandı:
+- **Ceza:** ban, unban, banlist, massban, kick, mute, unmute, chatmute, unchatmute, voicemute, unvoicemute, warn, unwarn, jail, unjail, jaillist
+- **Sicil:** sicil, siciltemizle, cezalar, case, modlog
+- **Ayar:** kurulum, logkur, ayar, yardım
+- 3 kademeli yetki sistemi, saatlik ceza limitleri, sıralı ceza numaraları (`#152`)
+- Ceza, komut, mesaj ve ses log kanalları
+- Çık-gir koruması, Discord üzerinden (sağ tık) verilen cezaların kayda işlenmesi
 
 ### 🔒 Guard
 Sunucuyu yetkisiz veya zararlı işlemlere karşı koruyan altyapı.
@@ -90,6 +91,7 @@ All-In-One/
 │   └── utils/              yardımcılar
 ├── config/                 genel.json (sunucu + yetki rolleri), <bot>.json
 ├── docs/                   tasarım dokümanları
+├── ecosystem.config.cjs    PM2 ayarı
 └── .env                    token'lar ve veritabanı adresi (GitHub'a yüklenmez)
 ```
 
@@ -99,7 +101,47 @@ Moderasyon botunun ayrıntılı tasarımı: [docs/moderasyon-tasarim.md](docs/mo
 
 ## Kurulum
 
-Ayrıntılı kurulum rehberi moderasyon botunun ilk aşaması tamamlandığında eklenecektir.
+### 1. Discord botunu oluşturma
+1. [Discord Developer Portal](https://discord.com/developers/applications) → **New Application**.
+2. **Bot** sekmesi → **Reset Token** ile token'ı alın (bir yere not edin).
+3. Aynı sayfada **Privileged Gateway Intents** altında **Server Members Intent** ve **Message Content Intent**'i açın.
+4. **OAuth2 → URL Generator**: `bot` ve `applications.commands` seçin, izinlerden **Administrator**'ı işaretleyin. Oluşan linkle botu sunucunuza ekleyin.
+
+### 2. MongoDB Atlas
+1. [MongoDB Atlas](https://www.mongodb.com/atlas)'ta ücretsiz (M0) bir cluster oluşturun.
+2. **Database Access**'ten bir kullanıcı ekleyin, **Network Access**'ten botun çalışacağı IP'ye izin verin (deneme için `0.0.0.0/0`).
+3. **Connect → Drivers**'dan bağlantı adresini kopyalayın.
+
+### 3. Dosyaları doldurma
+- `.env.example` dosyasını `.env` adıyla kopyalayın; `MONGODB_URI`, `MODERASYON_TOKEN` ve isterseniz `DEVELOPER_IDS` değerlerini yazın.
+- `config/genel.json`: `sunucuId` alanına sunucu ID'sini, `yetkiRolleri` altına düşük/orta/yüksek yetki rol ID'lerini yazın (sonradan `.ayar yetki` ile de ayarlanabilir).
+- `config/moderasyon.json`: prefix, saatlik ceza limitleri ve komut kademe değişiklikleri.
+
+> ID'leri kopyalamak için Discord'da **Ayarlar → Gelişmiş → Geliştirici Modu**'nu açıp sağ tık → **ID'yi Kopyala**.
+
+### 4. Çalıştırma
+Gerekenler: [Node.js 24](https://nodejs.org) ve pnpm (`npm i -g pnpm`).
+
+```bash
+pnpm install
+pnpm dev:moderasyon      # geliştirme: değişiklikte yeniden başlar
+```
+
+Sürekli çalıştırmak için (Windows veya VDS):
+
+```bash
+pnpm build
+pnpm start               # PM2 ile arka planda başlatır
+pnpm stop                # durdurur
+```
+
+### 5. Discord'da ilk ayarlar
+1. `.kurulum` — Cezalı, Chat Mute, Voice Mute rollerini ve `#cezalı` kanalını oluşturur, kanal izinlerini ayarlar.
+2. `.logkur` — `📁 Loglar` kategorisini ve log kanallarını açar.
+3. **Sunucu Ayarları → Entegrasyonlar** → bot: slash komutlarının yalnızca yetkililere görünmesini ayarlayın.
+4. Botun rolünü ceza rollerinin ve yetkililerin rollerinin **üstüne** taşıyın.
+
+Tüm komutları görmek için `.yardım`, bir komutun kullanımı için `.yardım <komut>`.
 
 > ⚠️ Bot token'ınızı kimseyle paylaşmayın. `.env` dosyası GitHub'a yüklenmez.
 
