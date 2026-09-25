@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDuration, MAX_TIMEOUT_MS, parseDuration } from './duration.js';
+import { encodeDuration, formatDuration, MAX_TIMEOUT_MS, parseDuration } from './duration.js';
 
 describe('parseDuration', () => {
   it('tekil birimleri ms cinsinden çözer', () => {
@@ -40,5 +40,19 @@ describe('formatDuration', () => {
 describe('MAX_TIMEOUT_MS', () => {
   it('28 gündür', () => {
     expect(MAX_TIMEOUT_MS).toBe(28 * 24 * 60 * 60 * 1000);
+  });
+});
+
+describe('encodeDuration', () => {
+  it('ms değerini kısa süre biçimine çevirir', () => {
+    expect(encodeDuration(5_400_000)).toBe('1sa30dk');
+    expect(encodeDuration(3_600_000)).toBe('1sa');
+    expect(encodeDuration(691_200_000)).toBe('1hf1g');
+  });
+
+  it('parseDuration ile tersinirdir', () => {
+    for (const ms of [1000, 60_000, 5_400_000, 90_061_000, 604_800_000]) {
+      expect(parseDuration(encodeDuration(ms))).toBe(ms);
+    }
   });
 });

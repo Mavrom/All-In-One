@@ -47,6 +47,26 @@ export function parseDuration(input: string): number | null {
   return totalMs > 0 ? totalMs : null;
 }
 
+/**
+ * Milisaniyeyi `parseDuration`'ın okuyabildiği kısa biçime çevirir (`5400000` → `"1sa30dk"`).
+ * Saniyenin altındaki kısım atılır.
+ */
+export function encodeDuration(ms: number): string {
+  let remaining = Math.floor(ms / 1000) * 1000;
+  let result = '';
+
+  for (const unit of ['hf', 'g', 'sa', 'dk', 'sn'] as const) {
+    const unitMs = UNIT_MS[unit];
+    const value = Math.floor(remaining / unitMs);
+    if (value > 0) {
+      result += `${value}${unit}`;
+      remaining -= value * unitMs;
+    }
+  }
+
+  return result;
+}
+
 /** Milisaniye cinsinden süreyi Türkçe okunabilir biçime çevirir (`"1 gün 2 saat"`). */
 export function formatDuration(ms: number): string {
   let remaining = ms;
