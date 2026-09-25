@@ -134,6 +134,23 @@ describe('buildSlash', () => {
     expect(body.options?.[0]?.options).toHaveLength(2);
   });
 
+  it('var olmayan bir alt komutu işaret eden defaultSubcommand hata fırlatır', () => {
+    const command = defineCommand({
+      name: 'ayar',
+      description: 'Ayarlar',
+      level: 4,
+      defaultSubcommand: 'yok',
+      subcommands: {
+        limit: {
+          name: 'limit',
+          description: 'Ceza limiti ayarlar',
+        },
+      },
+    });
+
+    expect(() => buildSlash(command)).toThrow('ayar: defaultSubcommand "yok" bulunamadı');
+  });
+
   it('geçersiz slash adı için hata fırlatır', () => {
     const command = defineCommand({
       name: 'ornek',

@@ -1,4 +1,5 @@
 import { parseDuration } from '#utils/duration.js';
+import { foldTurkish, trLower } from '#utils/text.js';
 import type { ArgDef, ArgDefMap, ArgValues } from './args.js';
 
 const USER_RE = /^(?:<@!?(\d{17,20})>|(\d{17,20}))$/;
@@ -114,10 +115,19 @@ export function parsePrefixArgs<A extends ArgDefMap>(
           }
           return { ok: false, error: `Geçersiz sayı: ${token}` };
         }
-        if (def.min !== undefined && num < def.min) {
-          return { ok: false, error: `Sayı en az ${def.min} olmalı` };
-        }
-        if (def.max !== undefined && num > def.max) {
+        const belowMin = def.min !== undefined && num < def.min;
+        const aboveMax = def.max !== undefined && num > def.max;
+        if (belowMin || aboveMax) {
+          // Opsiyonel bir sayı argümanı için min/max ihlali, diğer opsiyonel uyumsuzluklarla
+          // aynı şekilde davranır: değer `undefined` olur ve token tüketilmez (bir sonraki
+          // argümana bırakılır). Zorunlu argümanlarda Türkçe hata mesajları korunur.
+          if (optional) {
+            values[key] = undefined;
+            break;
+          }
+          if (belowMin) {
+            return { ok: false, error: `Sayı en az ${def.min} olmalı` };
+          }
           return { ok: false, error: `Sayı en fazla ${def.max} olmalı` };
         }
         values[key] = num;
@@ -136,10 +146,10 @@ export function parsePrefixArgs<A extends ArgDefMap>(
         }
         const choices = def.choices;
         if (choices !== undefined && choices.length > 0) {
-          // Seçenekler ASCII İngilizce anahtar kelimelerdir (ban, jail, ...); Türkçe kilit
-          // harfleme (`trLower`) "I" harfini "ı"ya çevirdiğinden ASCII karşılaştırmayı bozar
-          // (örn. "JAIL" ≠ trLower ile "jail"). Bu yüzden burada standart `toLowerCase` kullanılır.
-          const match = choices.find((choice) => choice.toLowerCase() === token.toLowerCase());
+          // Türkçe kilit harfleme + katlama: "JAIL" → "jaıl" → "jail" (ASCII seçeneklerle
+          // eşleşir), "KAPALI"/"kapali"/"Kapalı" → "kapali" (Türkçe seçeneklerle eşleşir).
+          const folded = foldTurkish(trLower(token));
+          const match = choices.find((choice) => foldTurkish(trLower(choice)) === folded);
           if (match === undefined) {
             if (optional) {
               values[key] = undefined;

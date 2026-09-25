@@ -97,6 +97,23 @@ describe('parsePrefixArgs — string choices', () => {
     expect(result).toEqual({ ok: true, values: { tur: 'jail' } });
   });
 
+  it('Türkçe seçenekler foldTurkish(trLower(...)) ile eşleşir', () => {
+    const args = { durum: arg.string({ description: 'Durum', choices: ['kapalı', 'açık'] }) };
+
+    expect(parsePrefixArgs(tokenize('KAPALI'), args)).toEqual({
+      ok: true,
+      values: { durum: 'kapalı' },
+    });
+    expect(parsePrefixArgs(tokenize('kapali'), args)).toEqual({
+      ok: true,
+      values: { durum: 'kapalı' },
+    });
+    expect(parsePrefixArgs(tokenize('Kapalı'), args)).toEqual({
+      ok: true,
+      values: { durum: 'kapalı' },
+    });
+  });
+
   it('opsiyonel ve eşleşmeyen seçenek atlanır', () => {
     const args = {
       tur: arg.string({ description: 'Tür', choices: ['ban', 'jail'], optional: true }),
@@ -150,6 +167,73 @@ describe('parsePrefixArgs — number', () => {
     expect(parsePrefixArgs(tokenize('9'), maxArgs)).toEqual({
       ok: false,
       error: 'Sayı en fazla 5 olmalı',
+    });
+  });
+
+  it('opsiyonel sayı min altında ise undefined olur ve token tüketilmez', () => {
+    const optionalArgs = {
+      sayi: arg.number({ description: 'Sayı', min: 5, optional: true }),
+      metin: arg.text({ description: 'Metin', optional: true }),
+    };
+    expect(parsePrefixArgs(tokenize('3'), optionalArgs)).toEqual({
+      ok: true,
+      values: { sayi: undefined, metin: '3' },
+    });
+  });
+
+  it('opsiyonel sayı max üstünde ise undefined olur ve token tüketilmez', () => {
+    const optionalArgs = {
+      sayi: arg.number({ description: 'Sayı', max: 5, optional: true }),
+      metin: arg.text({ description: 'Metin', optional: true }),
+    };
+    expect(parsePrefixArgs(tokenize('9'), optionalArgs)).toEqual({
+      ok: true,
+      values: { sayi: undefined, metin: '9' },
+    });
+  });
+});
+
+describe('parsePrefixArgs — role/channel', () => {
+  const ROLE_ID = '345678901234567890';
+  const CHANNEL_ID = '456789012345678901';
+
+  it("rol etiketini (<@&ID>) ve düz ID'yi ayrıştırır", () => {
+    const args = { rol: arg.role({ description: 'Rol' }) };
+    expect(parsePrefixArgs(tokenize(`<@&${ROLE_ID}>`), args)).toEqual({
+      ok: true,
+      values: { rol: ROLE_ID },
+    });
+    expect(parsePrefixArgs(tokenize(ROLE_ID), args)).toEqual({
+      ok: true,
+      values: { rol: ROLE_ID },
+    });
+  });
+
+  it('geçersiz rol için "Geçersiz rol: abc" döner', () => {
+    const args = { rol: arg.role({ description: 'Rol' }) };
+    expect(parsePrefixArgs(tokenize('abc'), args)).toEqual({
+      ok: false,
+      error: 'Geçersiz rol: abc',
+    });
+  });
+
+  it("kanal etiketini (<#ID>) ve düz ID'yi ayrıştırır", () => {
+    const args = { kanal: arg.channel({ description: 'Kanal' }) };
+    expect(parsePrefixArgs(tokenize(`<#${CHANNEL_ID}>`), args)).toEqual({
+      ok: true,
+      values: { kanal: CHANNEL_ID },
+    });
+    expect(parsePrefixArgs(tokenize(CHANNEL_ID), args)).toEqual({
+      ok: true,
+      values: { kanal: CHANNEL_ID },
+    });
+  });
+
+  it('geçersiz kanal için "Geçersiz kanal: abc" döner', () => {
+    const args = { kanal: arg.channel({ description: 'Kanal' }) };
+    expect(parsePrefixArgs(tokenize('abc'), args)).toEqual({
+      ok: false,
+      error: 'Geçersiz kanal: abc',
     });
   });
 });

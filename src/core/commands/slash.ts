@@ -5,7 +5,7 @@ import {
   InteractionContextType,
 } from 'discord.js';
 import { parseDuration } from '#utils/duration.js';
-import { truncate } from '#utils/text.js';
+import { trLower, truncate } from '#utils/text.js';
 import { UserError } from '../errors.js';
 import type { ArgDef, ArgDefMap, ArgValues } from './args.js';
 import type { CommandDef } from './define.js';
@@ -55,7 +55,7 @@ export interface SlashOptionReader {
 }
 
 function validateName(raw: string): string {
-  const lowered = raw.toLocaleLowerCase('tr-TR');
+  const lowered = trLower(raw);
   if (!NAME_RE.test(lowered)) {
     throw new Error(`Geçersiz slash adı: ${raw}`);
   }
@@ -227,6 +227,6 @@ export function readSlashArgs<A extends ArgDefMap>(
 }
 
 /** Komut gövdelerinin sha256 hex özetini üretir; kayıtlı komutların değişip değişmediğini anlamak için. */
-export function hashCommands(bodies: unknown): string {
+export function hashCommands(bodies: readonly SlashCommandBody[]): string {
   return createHash('sha256').update(JSON.stringify(bodies)).digest('hex');
 }
