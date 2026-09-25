@@ -6,9 +6,9 @@ import {
 } from 'discord.js';
 import { parseDuration } from '#utils/duration.js';
 import { trLower, truncate } from '#utils/text.js';
-import { UserError } from '../errors.js';
 import type { ArgDef, ArgDefMap, ArgValues } from './args.js';
 import type { CommandDef } from './define.js';
+import { UserError } from './errors.js';
 
 const NAME_RE = /^[-_\p{L}\p{N}]{1,32}$/u;
 const USER_ID_RE = /\d{17,20}/g;

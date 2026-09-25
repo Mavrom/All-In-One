@@ -1,6 +1,6 @@
 import type { ApplicationCommandDataResolvable } from 'discord.js';
-import type { Bot } from '../types.js';
 import { buildSlash, hashCommands } from './slash.js';
+import type { Bot } from './types.js';
 
 /** `registerSlashCommands` sonucu: kayıt atlandıysa `'unchanged'`, gerçekten kaydedildiyse `'updated'`. */
 export type RegisterResult = 'unchanged' | 'updated';

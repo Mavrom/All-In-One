@@ -1,13 +1,13 @@
 import type { Client, GatewayIntentBits, Guild, Partials } from 'discord.js';
 import { Client as DiscordClient } from 'discord.js';
 import { SettingsService } from '#services/SettingsService.js';
-import { handleInteraction, handleMessage } from './commands/dispatcher.js';
-import { loadCommands, loadEvents } from './commands/loader.js';
-import { registerSlashCommands } from './commands/register.js';
 import { type Env, type GenelConfig, genelSchema, loadEnv, loadJsonConfig } from './config.js';
 import { connectDatabase, disconnectDatabase } from './database.js';
+import { handleInteraction, handleMessage } from './dispatcher.js';
 import { ConfigError } from './errors.js';
+import { loadCommands, loadEvents } from './loader.js';
 import { createLogger } from './logger.js';
+import { registerSlashCommands } from './register.js';
 import type { Bot } from './types.js';
 
 /** `genel` kapsamındaki ayarların varsayılan anahtarları (kurulum/logkur ile doldurulur). */

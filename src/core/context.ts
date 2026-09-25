@@ -6,7 +6,7 @@ import type {
 } from 'discord.js';
 import { MessageFlags } from 'discord.js';
 import type { Level } from '#services/PermissionService.js';
-import type { Bot, CommandContext, ReplyOptions } from '../types.js';
+import type { Bot, CommandContext, ReplyOptions } from './types.js';
 
 /** `ctx.reply()`'a verilen `string | ReplyOptions` girdisini ortak bir şekle indirger. */
 interface NormalizedReply {

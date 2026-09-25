@@ -71,12 +71,12 @@ All-In-One/
 ```
 
 **Kurallar**
-- `src/` altındaki `core`, `models`, `services`, `utils` yalnızca **ortak** kod içerir. Bir bota özel kod o botun klasöründe kalır.
+- Bot klasöründe yalnızca `commands/`, `events/` ve `index.ts` bulunur. Yardımcı kod (ayar şeması, log embed'leri, hedef kontrolü vb.) `core`, `services` veya `utils` altına konur.
 - Bir bot başka bir botun klasöründen import yapmaz. Ortak ihtiyaç `src/services/`'e taşınır.
 - Her dosyada tek komut veya tek event bulunur; dosya adı komut adıyla aynıdır.
 - Komut kategorisi bulunduğu klasörden (`ceza/`, `sicil/`, `ayar/`) otomatik alınır.
 - Testler test ettikleri dosyanın yanında durur: `duration.ts` → `duration.test.ts`.
-- Import yolları `@/` takma adıyla yazılır: `@/services/PunishmentService`.
+- Klasörler arası import'lar `#` takma adıyla yazılır: `#services/PunishmentService.js`.
 - Kod içi isimler İngilizce, kullanıcıya görünen tüm metinler Türkçe.
 
 ---

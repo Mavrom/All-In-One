@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { loadJsonConfig } from '#core/config.js';
-import { botDefaults, moderasyonSchema } from './config.js';
+import { botDefaults, moderasyonSchema } from './moderasyonConfig.js';
 
 describe('moderasyonSchema', () => {
   it('config/moderasyon.json dosyasının şeklini kabul eder', () => {

@@ -1,9 +1,9 @@
-import { arg } from '#core/commands/args.js';
-import { defineCommand } from '#core/commands/define.js';
+import { arg } from '#core/args.js';
+import { defineCommand } from '#core/define.js';
+import { mod } from '#services/ModServices.js';
 import { Level } from '#services/PermissionService.js';
-import { mod } from '../../services.js';
-import { ensureCanPunish } from '../../target.js';
-import { punishmentDone } from '../../ui.js';
+import { ensureCanPunish } from '#services/TargetService.js';
+import { punishmentDone } from '#utils/replies.js';
 
 /** `/kick` ve `.kick` (alias `.at`): bir kullanıcıyı sunucudan atar. */
 export default defineCommand({

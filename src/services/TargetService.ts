@@ -1,5 +1,5 @@
 import type { Guild, GuildMember, User } from 'discord.js';
-import { memberLevel } from '#core/commands/dispatcher.js';
+import { memberLevel } from '#core/dispatcher.js';
 import { UserError } from '#core/errors.js';
 import type { CommandContext } from '#core/types.js';
 import { checkTarget, Level } from '#services/PermissionService.js';

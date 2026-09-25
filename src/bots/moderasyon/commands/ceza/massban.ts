@@ -1,12 +1,12 @@
 import type { User } from 'discord.js';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
-import { arg } from '#core/commands/args.js';
-import { defineCommand } from '#core/commands/define.js';
+import { arg } from '#core/args.js';
+import { defineCommand } from '#core/define.js';
 import { UserError } from '#core/errors.js';
+import { mod } from '#services/ModServices.js';
 import { Level } from '#services/PermissionService.js';
+import { ensureCanPunish } from '#services/TargetService.js';
 import { embed } from '#utils/embed.js';
-import { mod } from '../../services.js';
-import { ensureCanPunish } from '../../target.js';
 
 const MAX_TARGETS = 50;
 const CONFIRM_MS = 30_000;

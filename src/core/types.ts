@@ -13,8 +13,8 @@ import type {
 import type { Logger } from 'pino';
 import type { Level } from '#services/PermissionService.js';
 import type { SettingsService } from '#services/SettingsService.js';
-import type { CommandDef } from './commands/define.js';
 import type { Env, GenelConfig } from './config.js';
+import type { CommandDef } from './define.js';
 
 /** `ctx.reply()` çağrısına verilebilecek yanıt seçenekleri. */
 export interface ReplyOptions {

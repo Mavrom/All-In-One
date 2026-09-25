@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { CommandRunInfo } from '#core/types.js';
 import type { PunishmentRecord } from '#models/Punishment.js';
 import type { LogChannelKey } from '#services/LogService.js';
-import { commandLogEmbed, logPunishmentEvent } from './logs.js';
+import { commandLogEmbed, logPunishmentEvent } from './logEmbeds.js';
 
 function makeRecord(overrides?: Partial<PunishmentRecord>): PunishmentRecord {
   return {

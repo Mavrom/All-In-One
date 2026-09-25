@@ -1,6 +1,6 @@
 import { ChannelType, PermissionFlagsBits } from 'discord.js';
 import { describe, expect, it } from 'vitest';
-import { punishmentOverwrites, punishmentRoleIds } from './setup.js';
+import { punishmentOverwrites, punishmentRoleIds } from './punishmentRoles.js';
 
 const roles = { cezali: 'C', chatmute: 'M', voicemute: 'V' };
 

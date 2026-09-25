@@ -3,9 +3,9 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { ClientEvents } from 'discord.js';
 import { foldTurkish, trLower } from '#utils/text.js';
-import type { EventDef } from '../events.js';
-import type { Bot, CommandRegistry } from '../types.js';
 import type { CommandDef } from './define.js';
+import type { EventDef } from './events.js';
+import type { Bot, CommandRegistry } from './types.js';
 
 /** `.test.` içeren veya `.d.ts` ile biten dosyalar hariç, `.ts`/`.js` uzantılı dosyaları seçer. */
 function isLoadableFile(name: string): boolean {

@@ -1,5 +1,5 @@
 import type { EmbedBuilder } from 'discord.js';
-import { defineCommand } from '#core/commands/define.js';
+import { defineCommand } from '#core/define.js';
 import { Level } from '#services/PermissionService.js';
 import { embed } from '#utils/embed.js';
 import { paginate } from '#utils/paginate.js';

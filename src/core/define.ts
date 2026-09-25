@@ -1,6 +1,6 @@
 import type { Level } from '#services/PermissionService.js';
-import type { CommandContext } from '../types.js';
 import type { ArgDefMap, ArgValues } from './args.js';
+import type { CommandContext } from './types.js';
 
 /** Bir komutun alt komutu (`/ayar limit` gibi); ana komutla aynı argüman/çalışma şeklini kullanır. */
 export interface SubcommandDef<A extends ArgDefMap = ArgDefMap> {
