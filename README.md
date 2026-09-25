@@ -1,6 +1,6 @@
 # Discord Bot Altyapıları (discord.js v14)
 
-Bu proje, **discord.js v14** ile sıfırdan yazılan Discord bot altyapılarından oluşan bir koleksiyondur. Her bot kendi başına çalışabilen, bağımsız bir altyapı olarak tasarlanır.
+Bu proje, **discord.js v14** ile sıfırdan yazılan Discord bot altyapılarından oluşan bir koleksiyondur. Tüm botlar ortak bir çekirdeği (yetki sistemi, veritabanı, loglama, komut sistemi) paylaşır ve her biri ayrı bir süreç olarak çalışır.
 
 Proje **aktif olarak geliştirilmektedir**. Mevcut altyapılar güncellenmeye devam eder, yenileri zamanla eklenir. Listedeki botlar şu anki plandır; ihtiyaca göre eklenebilir veya çıkarılabilir.
 
@@ -8,9 +8,10 @@ Proje **aktif olarak geliştirilmektedir**. Mevcut altyapılar güncellenmeye de
 
 ## Teknolojiler
 
-- **Node.js** (v18 veya üstü)
-- **discord.js v14**
-- Slash komutları (`/komut`) ve etkileşimler (buton, menü, modal)
+- **Node.js 24 LTS** + **TypeScript**
+- **discord.js v14** — slash (`/komut`) ve prefix (`.komut`) desteği
+- **MongoDB Atlas** + Mongoose
+- **pnpm**, **PM2**, Zod, Pino, Biome, Vitest
 
 ---
 
@@ -20,7 +21,7 @@ Botlar öncelik sırasına göre tek tek geliştirilecektir. **İlk öncelik mod
 
 | Sıra | Altyapı | Durum |
 |:---:|---|---|
-| 1 | Moderasyon | 🔜 Sırada |
+| 1 | Moderasyon | 🚧 Geliştiriliyor |
 | 2 | Guard | 📝 Planlandı |
 | 3 | İstatistik | 📝 Planlandı |
 | 4 | Özel Oda | 📝 Planlandı |
@@ -78,40 +79,29 @@ Pinterest içerikleriyle çalışan altyapı.
 
 ## Proje Yapısı
 
-Her bot kendi klasöründe, bağımsız olarak yer alır:
-
 ```
-Altyapı Projesi/
-├── moderasyon/
-├── guard/
-├── istatistik/
-├── ozel-oda/
-├── rol-secme/
-├── eglence/
-├── pinterest/
-└── README.md
+All-In-One/
+├── src/
+│   ├── bots/
+│   │   └── moderasyon/     commands/ (kategorilere ayrılmış) + events/ + index.ts
+│   ├── core/               bot başlatma, komut/event yükleyici, config, veritabanı
+│   ├── models/             ortak veritabanı şemaları
+│   ├── services/           ortak servisler (ceza, yetki, limit, log, ayar)
+│   └── utils/              yardımcılar
+├── config/                 genel.json (sunucu + yetki rolleri), <bot>.json
+├── docs/                   tasarım dokümanları
+└── .env                    token'lar ve veritabanı adresi (GitHub'a yüklenmez)
 ```
 
-> Klasör yapısı ilk altyapı yazıldıkça netleşecek ve burada güncellenecektir.
+Moderasyon botunun ayrıntılı tasarımı: [docs/moderasyon-tasarim.md](docs/moderasyon-tasarim.md)
 
 ---
 
-## Kurulum (Genel)
+## Kurulum
 
-Her botun kendi klasöründe ayrıntılı kurulum notları bulunacaktır. Genel adımlar:
+Ayrıntılı kurulum rehberi moderasyon botunun ilk aşaması tamamlandığında eklenecektir.
 
-1. Kullanmak istediğiniz botun klasörüne girin.
-2. Bağımlılıkları yükleyin:
-   ```bash
-   npm install
-   ```
-3. Yapılandırma dosyasını doldurun (bot token'ı, sunucu ID'si, kanal ve rol ID'leri vb.).
-4. Botu başlatın:
-   ```bash
-   npm start
-   ```
-
-> ⚠️ Bot token'ınızı kimseyle paylaşmayın ve herkese açık bir depoya yüklemeyin.
+> ⚠️ Bot token'ınızı kimseyle paylaşmayın. `.env` dosyası GitHub'a yüklenmez.
 
 ---
 
