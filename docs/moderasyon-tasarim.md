@@ -8,12 +8,12 @@ Bu doküman All-In-One projesinin ortak çekirdeğini ve moderasyon botunun ilk 
 
 ## 1. Kapsam
 
-Moderasyon botu 4 aşamada geliştirilir. Bu doküman yalnızca **Aşama 1**'i kapsar.
+Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1** ve **Aşama 2**'yi kapsar (Aşama 2 için bkz. [12. bölüm](#12-aşama-2--kanal-ve-ses-yönetimi)).
 
 | Aşama | İçerik |
 |---|---|
 | **1. Çekirdek + Ceza sistemi** | Ortak altyapı, yetki/limit sistemi, ceza ve sicil komutları, kurulum, logkur, ayar, yardım |
-| 2. Kanal + Ses yönetimi | clear, sil, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim |
+| **2. Kanal + Ses yönetimi** | clear, sil, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim |
 | 3. Otomatik moderasyon | küfür-engel, reklam-engel, yasaklı-kelime, görsel-engel, hesap-koruma |
 | 4. Otorol | otorol, otorolkapat |
 
@@ -346,3 +346,29 @@ Aktif jail/chatmute/voicemute cezası olan biri sunucuya tekrar girerse rolü ge
 3. `.env` ve `config/*.json` dosyalarını doldurma.
 4. `pnpm install` → `pnpm dev:moderasyon`.
 5. Discord'da `.kurulum` → `.logkur` → Entegrasyonlar adımı.
+
+---
+
+## 12. Aşama 2 — Kanal ve Ses Yönetimi
+
+Komutlar üç yeni kategoride durur: `kanal/`, `ses/`, `uye/`. Kademeler `ayar kademe` ile değiştirilebilir.
+
+| Komut | Kullanım | Kademe |
+|---|---|---|
+| clear (sil, temizle) | `clear <1-100>` | 1 |
+| clearuser | `clearuser <kullanıcı> [sayı]` | 1 |
+| clearbot | `clearbot [sayı]` | 1 |
+| clearlinks | `clearlinks [sayı]` — bağlantı ve Discord davetleri | 1 |
+| slowmode (yavaşmod) | `slowmode <süre\|0> [kanal]` — en fazla 6 saat | 2 |
+| kilit (lock) | `kilit [kanal]` — `@everyone` yazma iznini kapatır/açar | 2 |
+| move (taşı) | `move <kullanıcı> <ses kanalı>` | 1 |
+| moveall | `moveall <hedef> [kaynak]` — kaynak boşsa bulunduğun kanal | 2 |
+| disconnect (dc) | `disconnect <kullanıcı>` | 1 |
+| disconnectall | `disconnectall [kanal]` — kendin hariç | 2 |
+| isim (nick) | `isim <kullanıcı> [yeni isim]` — boşsa sıfırlar | 1 |
+
+**Kurallar**
+- Silme komutları son 100 mesaja bakar; sabitli ve 14 günden eski mesajlar (Discord sınırı) silinmez, komut mesajının kendisi sayılmaz.
+- move, disconnect ve isim, ceza komutlarıyla aynı hedef kontrolünü kullanır: kendin, bot, sunucu sahibi ve eşit/üst kademedeki yetkililer üzerinde işlem yapılamaz.
+- Toplu taşıma/çıkarmada taşınamayan üyeler atlanır, sonuçta `taşınan/toplam` gösterilir.
+- Tüm işlemler `komut-log`'a otomatik yazılır.

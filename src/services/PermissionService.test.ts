@@ -99,24 +99,24 @@ describe('checkTarget', () => {
 
   it('kendine ceza verilemez', () => {
     const result = checkTarget({ ...base, targetId: 'exec-1', targetLevel: Level.None });
-    expect(result).toEqual({ ok: false, reason: 'Kendine ceza veremezsin.' });
+    expect(result).toEqual({ ok: false, reason: 'Kendi üzerinde bu işlemi yapamazsın.' });
   });
 
   it('bota ceza verilemez', () => {
     const result = checkTarget({ ...base, targetId: 'bot-1' });
-    expect(result).toEqual({ ok: false, reason: 'Bota ceza verilemez.' });
+    expect(result).toEqual({ ok: false, reason: 'Bot üzerinde bu işlem yapılamaz.' });
   });
 
   it('sunucu sahibine ceza verilemez', () => {
     const result = checkTarget({ ...base, targetId: 'owner-1', targetLevel: Level.Owner });
-    expect(result).toEqual({ ok: false, reason: 'Sunucu sahibine ceza verilemez.' });
+    expect(result).toEqual({ ok: false, reason: 'Sunucu sahibi üzerinde bu işlem yapılamaz.' });
   });
 
   it('eşit kademedeki bir yetkiliye ceza verilemez', () => {
     const result = checkTarget({ ...base, executorLevel: Level.Mid, targetLevel: Level.Mid });
     expect(result).toEqual({
       ok: false,
-      reason: 'Kendi kademendeki veya üstündeki bir yetkiliye ceza veremezsin.',
+      reason: 'Kendi kademendeki veya üstündeki bir yetkili üzerinde bu işlemi yapamazsın.',
     });
   });
 
@@ -124,7 +124,7 @@ describe('checkTarget', () => {
     const result = checkTarget({ ...base, executorLevel: Level.Low, targetLevel: Level.Mid });
     expect(result).toEqual({
       ok: false,
-      reason: 'Kendi kademendeki veya üstündeki bir yetkiliye ceza veremezsin.',
+      reason: 'Kendi kademendeki veya üstündeki bir yetkili üzerinde bu işlemi yapamazsın.',
     });
   });
 

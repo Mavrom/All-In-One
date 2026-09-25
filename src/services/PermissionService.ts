@@ -89,21 +89,21 @@ export function checkTarget(input: {
   } = input;
 
   if (targetId === executorId) {
-    return { ok: false, reason: 'Kendine ceza veremezsin.' };
+    return { ok: false, reason: 'Kendi üzerinde bu işlemi yapamazsın.' };
   }
 
   if (targetId === botId) {
-    return { ok: false, reason: 'Bota ceza verilemez.' };
+    return { ok: false, reason: 'Bot üzerinde bu işlem yapılamaz.' };
   }
 
   if (targetId === ownerId) {
-    return { ok: false, reason: 'Sunucu sahibine ceza verilemez.' };
+    return { ok: false, reason: 'Sunucu sahibi üzerinde bu işlem yapılamaz.' };
   }
 
   if (executorLevel !== Level.Owner && targetLevel >= executorLevel) {
     return {
       ok: false,
-      reason: 'Kendi kademendeki veya üstündeki bir yetkiliye ceza veremezsin.',
+      reason: 'Kendi kademendeki veya üstündeki bir yetkili üzerinde bu işlemi yapamazsın.',
     };
   }
 

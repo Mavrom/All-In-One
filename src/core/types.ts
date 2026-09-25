@@ -35,6 +35,8 @@ export interface CommandContext {
   isSlash: boolean;
   prefix: string;
   commandName: string;
+  /** Prefix komutlarında komutu içeren mesajın ID'si (slash'ta yok). */
+  sourceMessageId?: string;
   reply(options: string | ReplyOptions): Promise<Message>;
   defer(): Promise<void>;
 }

@@ -112,6 +112,7 @@ export function prefixContext(
     isSlash: false,
     prefix,
     commandName,
+    sourceMessageId: message.id,
     async reply(options: string | ReplyOptions): Promise<Message> {
       const normalized = normalizeReply(options);
       return (await message.reply({

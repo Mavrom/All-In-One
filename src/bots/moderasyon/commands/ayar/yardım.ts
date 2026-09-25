@@ -9,6 +9,9 @@ import { embed } from '#utils/embed.js';
 const CATEGORY_LABELS: Record<string, string> = {
   ceza: 'Ceza',
   sicil: 'Sicil',
+  kanal: 'Kanal',
+  ses: 'Ses',
+  uye: 'Üye',
   ayar: 'Ayar',
 };
 
