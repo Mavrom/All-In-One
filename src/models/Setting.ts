@@ -1,5 +1,5 @@
 import type { Model } from 'mongoose';
-import { model, Schema } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
 
 /** Veritabanında saklanan dinamik bir ayar değeri. */
 export interface SettingRecord {
@@ -26,4 +26,6 @@ const settingSchema = new Schema<SettingRecord>(
 settingSchema.index({ guildId: 1, scope: 1, key: 1 }, { unique: true });
 
 /** `.ayar` ile değiştirilen ve kurulum/logkur ile oluşan dinamik ayar değerlerini tutar. */
-export const Setting: Model<SettingRecord> = model<SettingRecord>('Setting', settingSchema);
+export const Setting: Model<SettingRecord> =
+  (mongoose.models.Setting as Model<SettingRecord> | undefined) ??
+  model<SettingRecord>('Setting', settingSchema);

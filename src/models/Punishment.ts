@@ -1,5 +1,5 @@
 import type { Model } from 'mongoose';
-import { model, Schema } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
 
 /** Ceza türleri. */
 export type PunishmentType = 'ban' | 'kick' | 'mute' | 'chatmute' | 'voicemute' | 'jail' | 'warn';
@@ -78,7 +78,6 @@ punishmentSchema.index({ staffId: 1, type: 1, createdAt: -1 });
 punishmentSchema.index({ status: 1, expiresAt: 1 });
 
 /** Ceza kayıtlarını tutan koleksiyon; kayıt asla silinmez, iptal `status: 'revoked'` ile işlenir. */
-export const Punishment: Model<PunishmentRecord> = model<PunishmentRecord>(
-  'Punishment',
-  punishmentSchema,
-);
+export const Punishment: Model<PunishmentRecord> =
+  (mongoose.models.Punishment as Model<PunishmentRecord> | undefined) ??
+  model<PunishmentRecord>('Punishment', punishmentSchema);

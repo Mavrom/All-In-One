@@ -1,5 +1,5 @@
 import type { Model } from 'mongoose';
-import { model, Schema } from 'mongoose';
+import mongoose, { model, Schema } from 'mongoose';
 
 interface CounterDoc {
   _id: string;
@@ -15,7 +15,9 @@ const counterSchema = new Schema<CounterDoc>(
 );
 
 /** Ceza numarası gibi atomik sayaçları tutan koleksiyon. */
-export const Counter: Model<CounterDoc> = model<CounterDoc>('Counter', counterSchema);
+export const Counter: Model<CounterDoc> =
+  (mongoose.models.Counter as Model<CounterDoc> | undefined) ??
+  model<CounterDoc>('Counter', counterSchema);
 
 /**
  * `name` sayacını atomik olarak bir artırır ve yeni değeri döner. Sayaç yoksa 0'dan

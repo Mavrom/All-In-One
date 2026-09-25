@@ -16,6 +16,9 @@ export function useTestDatabase(): void {
     server = await MongoMemoryServer.create();
     const logger = createLogger('test', { NODE_ENV: 'test', LOG_LEVEL: 'silent' });
     await connectDatabase(server.getUri(), logger);
+    // Mongoose'un örtük tampon işlemine (buffering) güvenmek yerine indeksleri açıkça
+    // eşitle: uniqueness'a bağlı testlerin index henüz kurulmadan çalışması engellenir.
+    await mongoose.connection.syncIndexes();
   });
 
   afterEach(async () => {
