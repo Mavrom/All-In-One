@@ -11,7 +11,7 @@ import { success } from '#utils/replies.js';
 export default defineCommand({
   name: 'otorol',
   description: 'Yeni üyelere otomatik verilecek rolü ayarlar.',
-  level: Level.High,
+  level: Level.Owner,
   args: {
     rol: arg.role({ description: 'Üyelere verilecek rol' }),
     botrol: arg.role({ description: 'Botlara verilecek rol (isteğe bağlı)', optional: true }),

@@ -381,8 +381,8 @@ Komutlar üç yeni kategoride durur: `kanal/`, `ses/`, `uye/`. Kademeler `ayar k
 
 | Komut | Kullanım | Kademe |
 |---|---|---|
-| otorol | `otorol <rol> [bot rolü]` | 3 |
-| otorolkapat | `otorolkapat` | 3 |
+| otorol | `otorol <rol> [bot rolü]` | Sahip |
+| otorolkapat | `otorolkapat` | Sahip |
 
 - Ayarlar `otorol.uye` ve `otorol.bot` anahtarlarında tutulur (`ayar` ile görünür).
 - Rol botun rolünden aşağıda olmalı ve bir entegrasyona ait olmamalıdır; komut bunu kontrol eder.

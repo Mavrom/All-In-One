@@ -79,7 +79,7 @@ export async function createBot(opts: CreateBotOptions): Promise<Bot> {
   });
 
   const readyPromise = new Promise<Client<true>>((resolve) => {
-    client.once('ready', (readyClient) => resolve(readyClient));
+    client.once('clientReady', (readyClient) => resolve(readyClient));
   });
   await client.login(env.token);
   const readyClient = await readyPromise;

@@ -6,7 +6,7 @@ import { success } from '#utils/replies.js';
 export default defineCommand({
   name: 'otorolkapat',
   description: 'Otorolü kapatır.',
-  level: Level.High,
+  level: Level.Owner,
   async run(ctx) {
     await ctx.bot.settings.bot.set('otorol.uye', null, ctx.user.id);
     await ctx.bot.settings.bot.set('otorol.bot', null, ctx.user.id);
