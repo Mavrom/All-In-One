@@ -103,6 +103,12 @@ export function selectSubcommand(def: CommandDef, tokens: string[]): SelectSubco
   };
 }
 
+/** Seçilen alt komutun (yoksa komutun kendisinin) argüman şemasını döner. */
+function argsSchemaFor(def: CommandDef, subName: string | undefined): ArgDefMap {
+  const sub = subName !== undefined ? def.subcommands?.[subName] : undefined;
+  return sub?.args ?? def.args ?? {};
+}
+
 /** Bir yanıt gönderir; etkileşim/mesaj artık yanıtlanamıyorsa (süresi dolmuş vb.) hatayı yutar. */
 async function safeReply(ctx: CommandContext, content: string, ephemeral: boolean): Promise<void> {
   try {
@@ -132,7 +138,7 @@ async function runCommand(
   }
 
   const sub = subName !== undefined ? def.subcommands?.[subName] : undefined;
-  const argsSchema: ArgDefMap = sub?.args ?? def.args ?? {};
+  const argsSchema = argsSchemaFor(def, subName);
 
   let values: Record<string, unknown>;
   try {
@@ -205,11 +211,9 @@ export async function handleInteraction(
   const ctx = slashContext(bot, interaction, member, level);
   const subName = interaction.options.getSubcommand(false) ?? undefined;
 
-  await runCommand(bot, ctx, def, subName, () => {
-    const sub = subName !== undefined ? def.subcommands?.[subName] : undefined;
-    const argsSchema: ArgDefMap = sub?.args ?? def.args ?? {};
-    return readSlashArgs(interaction.options, argsSchema);
-  });
+  await runCommand(bot, ctx, def, subName, () =>
+    readSlashArgs(interaction.options, argsSchemaFor(def, subName)),
+  );
 }
 
 /** Yalnızca `bot.guild`deki, botun kendisine ait olmayan mesajlardaki prefix komutlarını işler. */
@@ -251,9 +255,7 @@ export async function handleMessage(bot: Bot, message: Message): Promise<void> {
     if (!selection.ok) {
       throw new UserError(selection.error);
     }
-    const sub = selection.sub !== undefined ? def.subcommands?.[selection.sub] : undefined;
-    const argsSchema: ArgDefMap = sub?.args ?? def.args ?? {};
-    const result = parsePrefixArgs(selection.rest, argsSchema);
+    const result = parsePrefixArgs(selection.rest, argsSchemaFor(def, selection.sub));
     if (!result.ok) {
       throw new UserError(result.error);
     }

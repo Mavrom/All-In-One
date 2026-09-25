@@ -29,7 +29,7 @@ describe('requiredLevel', () => {
 describe('findCommand', () => {
   const uyariCommand = defineCommand({
     name: 'uyarı',
-    aliases: ['uyari'],
+    aliases: ['w'],
     description: 'Kullanıcıyı uyarır',
     level: Level.Low,
   });
@@ -39,8 +39,13 @@ describe('findCommand', () => {
     expect(findCommand(registry, 'UYARI')).toBe(uyariCommand);
   });
 
-  it('ASCII alias ile bulur (uyari → uyarı)', () => {
+  it('Türkçe karakter olmadan yazılan adı bulur (uyari → uyarı)', () => {
     expect(findCommand(registry, 'uyari')).toBe(uyariCommand);
+  });
+
+  it('alias ile bulur (w → uyarı)', () => {
+    expect(findCommand(registry, 'w')).toBe(uyariCommand);
+    expect(findCommand(registry, 'W')).toBe(uyariCommand);
   });
 
   it('bilinmeyen komut için undefined döner', () => {

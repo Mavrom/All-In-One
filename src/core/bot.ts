@@ -31,20 +31,13 @@ export const GENEL_DEFAULT_KEYS = [
  * kurulum/logkur ile oluşan rol ve kanal ID'leri henüz kurulmamışsa `null`dır.
  */
 export function genelDefaults(genel: GenelConfig): Record<string, unknown> {
-  return {
-    'yetki.dusuk': genel.yetkiRolleri.dusuk,
-    'yetki.orta': genel.yetkiRolleri.orta,
-    'yetki.yuksek': genel.yetkiRolleri.yuksek,
-    'rol.cezali': null,
-    'rol.chatmute': null,
-    'rol.voicemute': null,
-    'kanal.jail': null,
-    'kanal.cezaLog': null,
-    'kanal.komutLog': null,
-    'kanal.mesajLog': null,
-    'kanal.sesLog': null,
-    'kategori.log': null,
-  };
+  const defaults: Record<string, unknown> = Object.fromEntries(
+    GENEL_DEFAULT_KEYS.map((key) => [key, null]),
+  );
+  defaults['yetki.dusuk'] = genel.yetkiRolleri.dusuk;
+  defaults['yetki.orta'] = genel.yetkiRolleri.orta;
+  defaults['yetki.yuksek'] = genel.yetkiRolleri.yuksek;
+  return defaults;
 }
 
 /** {@link createBot} çağrısına verilen seçenekler. */
