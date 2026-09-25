@@ -21,3 +21,8 @@ export function mod(): ModServices {
   }
   return services;
 }
+
+/** Servisler kurulduysa döner, henüz kurulmadıysa `null` (bot açılırken gelen event'ler için). */
+export function modIfReady(): ModServices | null {
+  return services ?? null;
+}
