@@ -8,7 +8,7 @@ Bu doküman All-In-One projesinin ortak çekirdeğini ve moderasyon botunun ilk 
 
 ## 1. Kapsam
 
-Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2 ve 4**'ü ve üye logunu kapsar (bkz. 12. ve 13. bölümler). Aşama 3 (otomatik moderasyon) şimdilik ertelendi.
+Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2, 4 ve 5**'i ve üye logunu kapsar (bkz. 12.–14. bölümler). Aşama 3 (otomatik moderasyon) şimdilik ertelendi.
 
 | Aşama | İçerik |
 |---|---|
@@ -16,6 +16,7 @@ Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2 ve 4**'ü ve
 | **2. Kanal + Ses yönetimi** | clear, sil, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim |
 | 3. Otomatik moderasyon *(ertelendi)* | küfür-engel, reklam-engel, yasaklı-kelime, görsel-engel, hesap-koruma |
 | **4. Otorol** | otorol, otorolkapat |
+| **5. Toplu rol** | toplurol (bkz. 14. bölüm) |
 
 **Henüz yapılmayanlar:** Aşama 3, uyarı sayısına göre otomatik ceza, çoklu sunucu desteği, çoklu dil.
 
@@ -398,3 +399,71 @@ Komutlar üç yeni kategoride durur: `kanal/`, `ses/`, `uye/`. Kademeler `ayar k
 | Ayrılma | Üye, ne zaman katıldığı, sahip olduğu roller |
 | Üye güncelleme | Takma ad değişikliği, verilen/alınan roller |
 | Kullanıcı güncelleme | Kullanıcı adı ve görünen ad değişikliği |
+
+---
+
+## 14. Aşama 5 — Toplu Rol (`toplurol`)
+
+Tek komutla birçok üyeye rol verir veya alır. **Kademe: Sahip.** Üç giriş yolu vardır; üçü de aynı filtre nesnesini üretir, önizleme/onay ve işlem kısmı ortaktır.
+
+| Giriş | Örnek |
+|---|---|
+| Filtre dili (prefix + slash `filtre` alanı) | `.toplurol ver @Üye rolde @Kayıtsız hariç @Yetkili` |
+| Slash seçenekleri | `/toplurol islem:ver rol:@Üye hedef:üyeler rolde:@Kayıtsız haric:@Yetkili` |
+| Sihirbaz | `.toplurol` veya `/toplurol` (işlem/rol verilmeden) → menülerle seçim |
+
+### Filtre dili
+Filtreler art arda yazılır ve **hepsi birlikte** (VE) uygulanır. Türkçe karakterler zorunlu değildir (`uyeler` = `üyeler`).
+
+| Filtre | Anlamı |
+|---|---|
+| `herkes` / `üyeler` / `botlar` | Kapsam (varsayılan `herkes`) |
+| `rolde @A @B` | Belirtilen rollerin **hepsine** sahip olanlar |
+| `herhangi @A @B` | Belirtilen rollerden **en az birine** sahip olanlar |
+| `hariç @A @kişi` | Bu rollere sahip olanlar ve bu kişiler hariç |
+| `rolsüz` | @everyone dışında hiç rolü olmayanlar |
+| `kişiler @a @b 123…` | Yalnızca bu kişiler (diğer filtreler yine uygulanır) |
+| `hesap<7g` / `hesap>30g` | Hesabı 7 günden yeni / 30 günden eski olanlar |
+| `katılım<1g` / `katılım>30g` | Sunucuya 1 gün içinde / 30 günden önce katılanlar |
+| `seste` / `sestedeğil` | Şu an bir ses kanalında olan / olmayanlar |
+
+Süreler `ceza` komutlarıyla aynı biçimdedir (`30dk`, `12sa`, `7g`, `2hf`). Çelişen filtreler (`seste` + `sestedeğil`, `rolsüz` + `rolde`) hata verir. ID yazıldığında önce rol, sonra kullanıcı olarak aranır.
+
+Slash'ta yapılandırılmış seçenekler (`hedef`, `rolde`, `haric`, `hesap`, `katilim`, `seste`, `kisiler`) ile `filtre` metni birlikte kullanılabilir; ikisi birleştirilir. Bu seçenekler yalnızca slash'ta görünür (`slashOnly`), prefix'te filtre dili kullanılır.
+
+### Sihirbaz
+Tek mesajda: verilecek/alınacak rol menüsü, "şu rollerde olanlar" menüsü, "hariç roller" menüsü, ek filtreler menüsü (rolsüz, seste, seste değil, rollerden herhangi biri, hesap 7 günden yeni / 30 günden eski, son 24 saatte / 7 günde katılan) ve düğmeler (`İşlem: Ver/Al`, `Kime: Herkes/Üyeler/Botlar`, `Devam`, `İptal`). 2 dakika işlem yapılmazsa kapanır. Belirli kişiler sihirbazda yoktur; bunun için filtre dili kullanılır.
+
+### Önizleme ve onay
+- Rol, otorol ile aynı kontrolden geçer (bot rolünün altında, entegrasyon rolü değil); `@everyone` kullanılamaz.
+- Tüm üyeler çekilir, filtre uygulanır; rolü zaten olanlar (`ver`) veya olmayanlar (`al`) sayıdan düşülür.
+- Önizleme: işlem, rol, filtre özeti, etkilenecek kişi sayısı (üye/bot dağılımı), ilk 10 kişi, atlanan sayısı, tahmini süre. `Onayla` / `İptal`, 30 sn.
+- Hedef yoksa işlem başlamaz. Sunucu başına aynı anda tek toplurol çalışır.
+
+### Hız ve rate limit
+Discord rol değiştirme limitini sabit yayınlamaz; her yanıtta kalan hakkı başlıklarla bildirir ve discord.js bu başlıklara göre istekleri kendisi sıraya koyar (429 almadan bekler). Toplurol bunun üstüne kendini ayarlayan bir hız ekler:
+
+| Hedef sayısı | Davranış |
+|---|---|
+| ≤ 25 | Doğrudan, ara vermeden sırayla uygulanır (discord.js kuyruğu yeterli) |
+| > 25 | Gruplar hâlinde: ilk grup 10 kişi, gruplar arası 1 sn |
+
+- Grup sırasında rol isteği için `rateLimited` uyarısı **gelmezse**: grup +5 büyür (en fazla 25), bekleme ×0,75 kısalır (en az 0,5 sn).
+- Uyarı **gelirse**: grup yarıya iner (en az 5), bekleme ×2 uzar (en fazla 10 sn).
+- Aralardaki boşluk sayesinde diğer komutlar ve botlar toplurol sürerken takılmaz.
+- Geçersiz istek gönderilmez (Cloudflare'in 10 dk / 10.000 hatalı istek engeline karşı): rol ve yetki baştan kontrol edilir, zaten rolü olan/olmayan ve sunucudan ayrılmış üyeler atlanır. Art arda 5 hata gelirse işlem durur ve sebebini gösterir.
+
+### İlerleme, durdurma ve log
+- Mesaj en fazla 3 sn'de bir güncellenir: `412/1500 · ✅ 410 · ❌ 2 · kalan ~3 dk`, altında `Durdur` düğmesi.
+- Bitince özet: başarılı, başarısız, atlanan, ayrılmış, süre. Durdurulduysa kaç kişide kaldığı yazılır.
+- İşlem sürerken bu rolün tek tek `üye-log` kayıtları susturulur (yoksa her değişiklik ayrı log mesajı olur ve kanal rate limit'ine takılır); bitince `üye-log`'a tek bir özet yazılır. Komut `komut-log`'a her zamanki gibi düşer.
+
+### Dosyalar
+| Dosya | Görev |
+|---|---|
+| `src/utils/bulkRoleFilter.ts` | Filtre tipi, filtre dili ayrıştırıcı, üye eşleştirme, filtre özeti |
+| `src/services/BulkRole.ts` | Hedef toplama, kendini ayarlayan toplu işlem, aktif işlem kaydı |
+| `src/services/BulkRoleCommand.ts` | Önizleme/onay, ilerleme mesajı, durdurma, log |
+| `src/services/BulkRoleWizard.ts` | Sihirbaz menüleri |
+| `src/bots/moderasyon/commands/ayar/toplurol.ts` | Komut tanımı (prefix + slash) |
+| `src/core/args.ts`, `src/core/prefix.ts` | `slashOnly` argüman desteği |
