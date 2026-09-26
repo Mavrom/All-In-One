@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction, Message } from 'discord.js';
-import { GuildMember } from 'discord.js';
+import { GuildMember, PermissionFlagsBits } from 'discord.js';
 import mongoose from 'mongoose';
 import { Level, levelLabel, resolveLevel } from '#services/PermissionService.js';
 import type { SettingsService } from '#services/SettingsService.js';
@@ -45,6 +45,31 @@ export function requiredLevel(
   }
   const override = settings.get<number>(`kademe.${def.name}`);
   return (override ?? def.level) as Level;
+}
+
+/** Yetki kontrolü için üyeden gereken tek bilgi: Discord izinleri. */
+export interface PermissionHolder {
+  permissions: { has(permission: bigint): boolean };
+}
+
+/** Komut Discord Yönetici yetkisine açıksa (`allowAdministrator`) ve üyede bu yetki varsa `true`. */
+export function adminAllowed(
+  def: Pick<CommandDef, 'allowAdministrator'>,
+  member: PermissionHolder,
+): boolean {
+  return (
+    def.allowAdministrator === true && member.permissions.has(PermissionFlagsBits.Administrator)
+  );
+}
+
+/** Üyenin komutu kullanıp kullanamayacağı: kademesi yetiyorsa veya {@link adminAllowed}. */
+export function canUse(
+  def: Pick<CommandDef, 'name' | 'level' | 'allowAdministrator'>,
+  level: Level,
+  member: PermissionHolder,
+  settings: Pick<SettingsService, 'get'>,
+): boolean {
+  return level >= requiredLevel(def, settings) || adminAllowed(def, member);
 }
 
 /**
@@ -131,9 +156,12 @@ async function runCommand(
   subName: string | undefined,
   resolveArgs: () => Record<string, unknown>,
 ): Promise<void> {
-  const required = requiredLevel(def, bot.settings.bot);
-  if (ctx.level < required) {
-    await safeReply(ctx, `Bu komut için **${levelLabel(required)}** gerekli.`, true);
+  if (!canUse(def, ctx.level, ctx.member, bot.settings.bot)) {
+    const required = levelLabel(requiredLevel(def, bot.settings.bot));
+    const text = def.allowAdministrator
+      ? `Bu komut için **${required}** veya Discord **Yönetici** yetkisi gerekli.`
+      : `Bu komut için **${required}** gerekli.`;
+    await safeReply(ctx, text, true);
     return;
   }
 
@@ -243,7 +271,7 @@ export async function handleMessage(bot: Bot, message: Message): Promise<void> {
 
   const member = message.member ?? (await bot.guild.members.fetch(message.author.id));
   const level = memberLevel(bot, member);
-  if (level === Level.None) {
+  if (level === Level.None && !adminAllowed(def, member)) {
     // Yetkisiz kullanıcıların spam'ini önlemek için sessizce yoksayılır.
     return;
   }

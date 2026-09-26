@@ -404,7 +404,7 @@ Komutlar üç yeni kategoride durur: `kanal/`, `ses/`, `uye/`. Kademeler `ayar k
 
 ## 14. Aşama 5 — Toplu Rol (`toplurol`)
 
-Tek komutla birçok üyeye rol verir veya alır. **Kademe: Sahip.** Üç giriş yolu vardır; üçü de aynı filtre nesnesini üretir, önizleme/onay ve işlem kısmı ortaktır.
+Tek komutla birçok üyeye rol verir veya alır. **Yetki: Sahip veya Discord Yönetici yetkisi olanlar** (komut tanımındaki `allowAdministrator`; bot kademesi olmayan yöneticiler de kullanabilir). Üç giriş yolu vardır; üçü de aynı filtre nesnesini üretir, önizleme/onay ve işlem kısmı ortaktır.
 
 | Giriş | Örnek |
 |---|---|

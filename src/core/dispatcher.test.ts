@@ -1,7 +1,27 @@
 import { describe, expect, it } from 'vitest';
 import { Level } from '#services/PermissionService.js';
 import { defineCommand } from './define.js';
-import { findCommand, requiredLevel, selectSubcommand } from './dispatcher.js';
+import { canUse, findCommand, requiredLevel, selectSubcommand } from './dispatcher.js';
+
+describe('canUse', () => {
+  const settings = { get: <T>(): T | undefined => undefined };
+  const admin = { permissions: { has: () => true } };
+  const regular = { permissions: { has: () => false } };
+
+  it('kademesi yeten üye kullanır', () => {
+    expect(canUse({ name: 'x', level: Level.Mid }, Level.High, regular, settings)).toBe(true);
+  });
+
+  it('allowAdministrator ile Discord Yönetici kademeden bağımsız kullanır', () => {
+    const def = { name: 'toplurol', level: Level.Owner, allowAdministrator: true };
+    expect(canUse(def, Level.None, admin, settings)).toBe(true);
+    expect(canUse(def, Level.High, regular, settings)).toBe(false);
+  });
+
+  it('allowAdministrator yoksa Discord Yönetici yetmez', () => {
+    expect(canUse({ name: 'ayar', level: Level.Owner }, Level.High, admin, settings)).toBe(false);
+  });
+});
 
 describe('requiredLevel', () => {
   it('Owner komutları için ayar override olsa bile her zaman Owner döner', () => {

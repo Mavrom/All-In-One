@@ -1,6 +1,6 @@
 import { arg } from '#core/args.js';
 import { defineCommand } from '#core/define.js';
-import { findCommand, requiredLevel } from '#core/dispatcher.js';
+import { canUse, findCommand, requiredLevel } from '#core/dispatcher.js';
 import { UserError } from '#core/errors.js';
 import { usage } from '#core/prefix.js';
 import { Level, levelLabel } from '#services/PermissionService.js';
@@ -33,7 +33,7 @@ export default defineCommand({
     if (args.komut !== undefined) {
       const def = findCommand(ctx.bot.commands, args.komut);
       const required = def ? requiredLevel(def, settings) : undefined;
-      if (!def || required === undefined || ctx.level < required) {
+      if (!def || required === undefined || !canUse(def, ctx.level, ctx.member, settings)) {
         throw new UserError('Böyle bir komut yok ya da kullanma yetkin yok.');
       }
 
@@ -49,7 +49,13 @@ export default defineCommand({
         .setDescription(def.description)
         .addFields(
           { name: 'Kullanım', value: usages.join('\n') },
-          { name: 'Yetki', value: levelLabel(required), inline: true },
+          {
+            name: 'Yetki',
+            value: def.allowAdministrator
+              ? `${levelLabel(required)} veya Discord Yönetici`
+              : levelLabel(required),
+            inline: true,
+          },
         );
       if (def.aliases?.length) {
         result.addFields({
@@ -64,7 +70,7 @@ export default defineCommand({
 
     const byCategory = new Map<string, string[]>();
     for (const def of ctx.bot.commands.values()) {
-      if (ctx.level < requiredLevel(def, settings)) continue;
+      if (!canUse(def, ctx.level, ctx.member, settings)) continue;
       const category = def.category ?? 'diğer';
       const names = byCategory.get(category) ?? [];
       names.push(`\`${def.name}\``);

@@ -16,6 +16,8 @@ export interface CommandDef<A extends ArgDefMap = ArgDefMap> {
   aliases?: string[];
   description: string;
   level: Level;
+  /** `true` ise Discord Yönetici yetkisi olan üyeler kademeden bağımsız kullanabilir. */
+  allowAdministrator?: boolean;
   category?: string;
   args?: A;
   run?(ctx: CommandContext, values: ArgValues<A>): Promise<void> | void;

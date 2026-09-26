@@ -16,7 +16,8 @@ function compare(field: string, value: string): string {
 }
 
 /**
- * `/toplurol` ve `.toplurol`: filtreye uyan üyelere toplu rol verir veya alır. İşlem ve rol
+ * `/toplurol` ve `.toplurol`: filtreye uyan üyelere toplu rol verir veya alır; sahip ve
+ * Discord Yönetici yetkisi olanlar kullanabilir. İşlem ve rol
  * verilmezse menülü sihirbaz açılır. Slash'taki yapılandırılmış seçenekler filtre diline
  * çevrilip `filtre` metniyle birleştirilir; böylece üç giriş yolu da aynı ayrıştırıcıdan geçer.
  */
@@ -24,6 +25,7 @@ export default defineCommand({
   name: 'toplurol',
   description: 'Filtreye uyan üyelere toplu rol verir veya alır.',
   level: Level.Owner,
+  allowAdministrator: true,
   args: {
     islem: arg.string({ description: 'ver veya al', choices: ['ver', 'al'], optional: true }),
     rol: arg.role({ description: 'Verilecek / alınacak rol', optional: true }),
