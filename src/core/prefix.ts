@@ -36,7 +36,7 @@ function matchNumber(token: string): number | null {
  * Tokenleri `args` şemasına göre sırayla ayrıştırır. Opsiyonel bir argümanın sırası geldiğinde
  * elindeki token türe uymuyorsa değeri `undefined` olur ve token tüketilmez (bir sonraki
  * argümana bırakılır); zorunlu bir argüman eksik veya geçersizse ayrıştırma Türkçe bir hata
- * mesajıyla durur.
+ * mesajıyla durur. `slashOnly` argümanlar atlanır ve değerleri `undefined` olur.
  */
 export function parsePrefixArgs<A extends ArgDefMap>(
   tokens: string[],
@@ -46,6 +46,10 @@ export function parsePrefixArgs<A extends ArgDefMap>(
   let i = 0;
 
   for (const [key, def] of Object.entries(args) as [string, ArgDef][]) {
+    if (def.slashOnly === true) {
+      values[key] = undefined;
+      continue;
+    }
     const optional = def.optional === true;
 
     switch (def.kind) {
@@ -215,7 +219,9 @@ function usageLabel(key: string, def: ArgDef): string {
  */
 export function usage(name: string, args: ArgDefMap, prefix: string, sub?: string): string {
   const commandPart = sub !== undefined ? `${name} ${sub}` : name;
-  const parts = Object.entries(args).map(([key, def]) => usageLabel(key, def));
+  const parts = Object.entries(args)
+    .filter(([, def]) => def.slashOnly !== true)
+    .map(([key, def]) => usageLabel(key, def));
   return parts.length > 0
     ? `${prefix}${commandPart} ${parts.join(' ')}`
     : `${prefix}${commandPart}`;

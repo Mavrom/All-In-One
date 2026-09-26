@@ -261,6 +261,26 @@ describe('usage', () => {
   });
 });
 
+describe('slashOnly argümanlar', () => {
+  const args = {
+    rol: arg.role({ description: 'Rol', optional: true }),
+    rolde: arg.role({ description: 'Rolde', optional: true, slashOnly: true }),
+    filtre: arg.text({ description: 'Filtre', optional: true }),
+  };
+
+  it('prefix ayrıştırması slashOnly argümanı atlar, token sonrakine kalır', () => {
+    const result = parsePrefixArgs(tokenize('<@&111111111111111111> <@&222222222222222222>'), args);
+    expect(result).toEqual({
+      ok: true,
+      values: { rol: '111111111111111111', rolde: undefined, filtre: '<@&222222222222222222>' },
+    });
+  });
+
+  it('kullanım metninde slashOnly argüman görünmez', () => {
+    expect(usage('toplurol', args, '.')).toBe('.toplurol [rol] [filtre]');
+  });
+});
+
 describe('tür kontrolleri', () => {
   it('ArgValues opsiyonel argümanları | undefined yapar', () => {
     type Values = ArgValues<typeof banArgs>;

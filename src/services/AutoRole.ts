@@ -2,14 +2,14 @@ import type { GuildMember, Role } from 'discord.js';
 import { UserError } from '#core/errors.js';
 import type { CommandContext } from '#core/types.js';
 
-/** Otorol için bir rolün verilebilir olduğunu denetler; değilse `UserError` fırlatır. */
+/** Otorol ve toplu rol için bir rolün verilebilir olduğunu denetler; değilse `UserError` fırlatır. */
 export function assertAssignableRole(ctx: CommandContext, roleId: string): Role {
   const role = ctx.guild.roles.cache.get(roleId);
   if (!role || role.id === ctx.guild.id) {
     throw new UserError('Geçerli bir rol belirtmelisin.');
   }
   if (role.managed) {
-    throw new UserError('Bir bota/entegrasyona ait rol otorol olarak verilemez.');
+    throw new UserError('Bir bota/entegrasyona ait rol verilemez.');
   }
   const botTop = ctx.guild.members.me?.roles.highest.position ?? 0;
   if (role.position >= botTop) {

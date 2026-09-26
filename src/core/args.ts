@@ -2,6 +2,8 @@
 interface BaseArgDef {
   description: string;
   optional?: boolean;
+  /** Yalnızca slash seçeneği olarak görünür; prefix ayrıştırması ve kullanım metni bunu atlar. */
+  slashOnly?: boolean;
 }
 
 /** Tek bir kullanıcı (etiket veya ID); değeri kullanıcı ID'si. */

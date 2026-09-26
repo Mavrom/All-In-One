@@ -8,7 +8,7 @@ Bu doküman All-In-One projesinin ortak çekirdeğini ve moderasyon botunun ilk 
 
 ## 1. Kapsam
 
-Moderasyon botu 4 aşamada geliştirilir. Bu doküman **Aşama 1, 2, 4 ve 5**'i ve üye logunu kapsar (bkz. 12.–14. bölümler). Aşama 3 (otomatik moderasyon) şimdilik ertelendi.
+Moderasyon botu 5 aşamada geliştirilir. Bu doküman **Aşama 1, 2, 4 ve 5**'i ve üye logunu kapsar (bkz. 12.–14. bölümler). Aşama 3 (otomatik moderasyon) şimdilik ertelendi.
 
 | Aşama | İçerik |
 |---|---|

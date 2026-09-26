@@ -32,11 +32,12 @@ Botlar öncelik sırasına göre tek tek geliştirilecektir. **İlk öncelik mod
 > Sıralama ve içerik zamanla değişebilir. Durumlar geliştirme ilerledikçe güncellenecektir.
 
 ### 🛡️ Moderasyon
-Sunucu yetkililerinin kullanacağı temel yönetim araçları. Aşama 1, 2 ve 4 tamamlandı:
+Sunucu yetkililerinin kullanacağı temel yönetim araçları. Aşama 1, 2, 4 ve 5 tamamlandı:
 - **Ceza:** ban, unban, banlist, massban, kick, mute, unmute, chatmute, unchatmute, voicemute, unvoicemute, warn, unwarn, jail, unjail, jaillist
 - **Sicil:** sicil, siciltemizle, cezalar, case, modlog
 - **Ayar:** kurulum, logkur, ayar, yardım
 - **Otorol (Aşama 4):** otorol, otorolkapat
+- **Toplu rol (Aşama 5):** toplurol — filtreli toplu rol verme/alma (filtre dili, slash seçenekleri veya menülü sihirbaz), rate limit'e göre kendini ayarlayan hız
 - **Kanal ve ses (Aşama 2):** clear, clearuser, clearbot, clearlinks, slowmode, kilit, move, moveall, disconnect, disconnectall, isim
 - 3 kademeli yetki sistemi, saatlik ceza limitleri, sıralı ceza numaraları (`#152`)
 - Ceza, komut, mesaj, ses ve üye log kanalları
